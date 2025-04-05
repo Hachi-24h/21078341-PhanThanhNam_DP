@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: wp_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: hachi
+      MYSQL_PASSWORD: 123
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - wp_net
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wp_web
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: hachi
+      WORDPRESS_DB_PASSWORD: 123
+    networks:
+      - wp_net
+
+volumes:
+  db_data:
+
+networks:
+  wp_net:
+    driver: bridge
